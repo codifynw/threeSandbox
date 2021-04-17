@@ -59,26 +59,12 @@
 						// use of RoughnessMipmapper is optional
 						const roughnessMipmapper = new RoughnessMipmapper( renderer );
 
-						const loader = new GLTFLoader().setPath( 'models/gltf/DamagedHelmet/glTF/' );
-						loader.load( 'DamagedHelmet.gltf', function ( gltf ) {
-
-							gltf.scene.traverse( function ( child ) {
-
-								if ( child.isMesh ) {
-
-									// TOFIX RoughnessMipmapper seems to be broken with WebGL 2.0
-									// roughnessMipmapper.generateMipmaps( child.material );
-
-								}
-
-							} );
-
+						const loader = new GLTFLoader().setPath( 'models/gltf/the_iron_giant/' );
+						loader.load( 'scene.gltf', function ( gltf ) {
+							console.log('it is loaded')
 							scene.add( gltf.scene );
-
 							roughnessMipmapper.dispose();
-
 							render();
-
 						} );
 
 					} );
@@ -97,7 +83,7 @@
 				const controls = new OrbitControls( camera, renderer.domElement );
 				controls.addEventListener( 'change', render ); // use if there is no animation loop
 				controls.minDistance = 2;
-				controls.maxDistance = 10;
+				controls.maxDistance = 10110;
 				controls.target.set( 0, 0, - 0.2 );
 				controls.update();
 

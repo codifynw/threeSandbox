@@ -25,8 +25,7 @@
 
 				scene = new THREE.Scene();
 
-				const texture = new THREE.TextureLoader().load( 'textures/crate.gif' );
-
+				const texture = new THREE.TextureLoader().load( 'textures/pic.jpg' );
 				const geometry = new THREE.BoxGeometry( 200, 200, 200 );
 				const material = new THREE.MeshBasicMaterial( { map: texture } );
 
@@ -38,7 +37,6 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );
 
-				//
 
 				window.addEventListener( 'resize', onWindowResize );
 
@@ -57,8 +55,8 @@
 
 				requestAnimationFrame( animate );
 
-				mesh.rotation.x += 0.005;
-				mesh.rotation.y += 0.01;
+				// mesh.rotation.x += 0.005;
+				mesh.rotation.y += 0.001;
 
 				renderer.render( scene, camera );
 

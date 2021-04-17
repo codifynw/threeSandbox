@@ -44,13 +44,14 @@
 				container.appendChild( renderer.domElement );
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
-				camera.position.set( 0, 100, 0 );
+				camera.position.set( 0, 500, 0 );
 
 				const environment = new RoomEnvironment();
 				const pmremGenerator = new THREE.PMREMGenerator( renderer );
 
 				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0xbbbbbb );
+				// scene.background = new THREE.Color( 0xbbbbbb );
+				scene.background = new THREE.Color( 0x000000 );
 				scene.environment = pmremGenerator.fromScene( environment ).texture;
 
 				const grid = new THREE.GridHelper( 500, 10, 0xffffff, 0xffffff );
@@ -63,16 +64,20 @@
 					.setTranscoderPath( 'js/libs/basis/' )
 					.detectSupport( renderer );
 
-				const loader = new GLTFLoader().setPath( 'models/gltf/' );
+				// const loader = new GLTFLoader().setPath( 'models/gltf/' );
+				const loader = new GLTFLoader().setPath( 'models/gltf/the_iron_giant/' );
+
 				loader.setKTX2Loader( ktx2Loader );
 				loader.setMeshoptDecoder( MeshoptDecoder );
-				loader.load( 'coffeemat.glb', function ( gltf ) {
+				loader.load( 'scene.gltf', function ( gltf ) {
+
 
 					// coffeemat.glb was produced from the source scene using gltfpack:
 					// gltfpack -i coffeemat/scene.gltf -o coffeemat.glb -cc -tc
 					// The resulting model uses EXT_meshopt_compression (for geometry) and KHR_texture_basisu (for texture compression using ETC1S/BasisLZ)
 
 					gltf.scene.position.y = 8;
+					gltf.scene.scale.set(.15, .15, .15);
 
 					scene.add( gltf.scene );
 
@@ -80,10 +85,44 @@
 
 				} );
 
+				// loader.scene.traverse(function (child) {
+				// 	if (child.isMesh) {
+				// 	mesh01 = child;
+				// 	child.material = mat001; // This is
+				// 	scene.add(mesh01);
+				// 	mesh01.scale.set(1, 1, 1);
+				// 	}
+				// });
+
+
+				var mat001 = new THREE.MeshPhysicalMaterial();
+				mat001.color = new THREE.Color("gold");
+				mat001.reflectivity = 1.0;
+				mat001.roughness = 0.0;
+				mat001.envMapIntensity = 1.0;
+
+				const loader2 = new GLTFLoader().setPath( 'models/gltf/polyMan/' );
+				loader2.load( 'scene.gltf', function ( gltf ) {
+
+
+					// coffeemat.glb was produced from the source scene using gltfpack:
+					// gltfpack -i coffeemat/scene.gltf -o coffeemat.glb -cc -tc
+					// The resulting model uses EXT_meshopt_compression (for geometry) and KHR_texture_basisu (for texture compression using ETC1S/BasisLZ)
+
+					gltf.scene.position.y = 400;
+					gltf.scene.position.x = 83;
+					gltf.scene.scale.set(5, 5, 5);
+
+					scene.add( gltf.scene );
+
+					render();
+
+				} );				
+
 				const controls = new OrbitControls( camera, renderer.domElement );
 				controls.addEventListener( 'change', render ); // use if there is no animation loop
-				controls.minDistance = 400;
-				controls.maxDistance = 1000;
+				// controls.minDistance = 40;
+				// controls.maxDistance = 1000;
 				controls.target.set( 10, 90, - 16 );
 				controls.update();
 
