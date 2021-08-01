@@ -110,7 +110,7 @@
 					// The resulting model uses EXT_meshopt_compression (for geometry) and KHR_texture_basisu (for texture compression using ETC1S/BasisLZ)
 
 					gltf.scene.position.y = 400;
-					gltf.scene.position.x = 83;
+					gltf.scene.position.x = 90;
 					gltf.scene.scale.set(5, 5, 5);
 
 					scene.add( gltf.scene );
@@ -123,7 +123,7 @@
 				controls.addEventListener( 'change', render ); // use if there is no animation loop
 				// controls.minDistance = 40;
 				// controls.maxDistance = 1000;
-				controls.target.set( 10, 90, - 16 );
+				controls.target.set( 100, 400, - 16 );
 				controls.update();
 
 				window.addEventListener( 'resize', onWindowResize, false );
