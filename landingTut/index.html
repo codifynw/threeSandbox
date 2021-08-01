@@ -4,7 +4,7 @@
 	<title>Relative Studios</title>
 	<style>
 		html, body { margin: 0; padding:0; overflow: hidden; }
-        h1 { color:white; position:absolute; top:75%;
+        h1 { color:white; position:absolute; top:50%;
         z-index:100; width:100%; text-align: center; 
         transform: translate(0,-100%); font-family: 
         ‘Raleway’, sans-serif; font-weight: 100; 
@@ -19,7 +19,6 @@
         import { GLTFLoader } from './loaders/GLTFLoader.js';
         import { OrbitControls } from "https://threejs.org/examples/jsm/controls/OrbitControls.js";
 
-        const clock = new THREE.Clock();
 
 		var num=50;
         var objects=[];
@@ -28,14 +27,12 @@
         var light,t;
         var littleM;
         var bigM;
-        var light1, light2, light3, light4;
 
         // create camera
         var camera = new THREE.PerspectiveCamera
         ( 65, window.innerWidth/window.innerHeight, 
         0.1, 1000 );
-        // X, Y, Z, zoom?
-        camera.position.set(5.5,8,2);
+        camera.position.set(0.0,0.0,5);
         // create a scene
         var scene = new THREE.Scene();
 
@@ -48,57 +45,18 @@
         );
 
         //Create a Spot light
-        light = new THREE.SpotLight( 0xccddff,.8 );
-        light.position.set(0,0,5);
-        scene.add( light );
+        // light = new THREE.SpotLight( 0xccddff,.8 );
+        // light.position.set(0,0,5);
+        // scene.add( light );
 
          // Load Light
         var ambientLight = new THREE.AmbientLight( 0xcccccc );
         scene.add( ambientLight );
 
         // DIRECTIONAL LIGHT
-        var directionalLight = new THREE.DirectionalLight( 0xffffff );
-        directionalLight.position.set( 0, 1, 1 ).normalize();
-        scene.add( directionalLight );		
-
-
-
-
-
-
-
-
-        const sphere = new THREE.SphereGeometry( 0.5, 16, 8 );
-
-        //lights
-
-        light1 = new THREE.PointLight( 0xffffff, 0.5, 50 );
-        // light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xff0040 } ) ) );
-        scene.add( light1 );
-
-        light2 = new THREE.PointLight( 0xffffff, 0.5, 50 );
-        // light2.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0x0040ff } ) ) );
-        scene.add( light2 );
-
-        light3 = new THREE.PointLight( 0xffffff, 0.5, 50 );
-        // light3.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0x80ff80 } ) ) );
-        scene.add( light3 );
-
-        light4 = new THREE.PointLight( 0xffffff, 0.5, 50 );
-        // light4.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xffaa00 } ) ) );
-        scene.add( light4 );
-
-
-
-
-
-
-
-
-
-
-
-
+        // var directionalLight = new THREE.DirectionalLight( 0xffffff );
+        // directionalLight.position.set( 0, 1, 1 ).normalize();
+        // scene.add( directionalLight );		
 
         var animate = function () {
             for (let i=0;i<=num;i++){
@@ -114,30 +72,12 @@
                 o.position.y = (Math.sin(o.radians2) * o.distance*.5);
             }
 
-
-
-            const time = Date.now() * 0.0005;
-				const delta = clock.getDelta();
-				light1.position.x = Math.sin( time * 2.7 ) * 3;
-				light1.position.y = Math.cos( time * 2.5 ) * 4;
-				light1.position.z = Math.cos( time * 2.3 ) * 3;
-				light2.position.x = Math.cos( time * 2.3 ) * 3;
-				light2.position.y = Math.sin( time * 2.5 ) * 4;
-				light2.position.z = Math.sin( time * 2.7 ) * 3;
-				light3.position.x = Math.sin( time * 2.7 ) * 3;
-				light3.position.y = Math.cos( time * 2.3 ) * 4;
-				light3.position.z = Math.sin( time * 2.5 ) * 3;
-				light4.position.x = Math.sin( time * 2.3 ) * 3;
-				light4.position.y = Math.cos( time * 2.7 ) * 4;
-				light4.position.z = Math.sin( time * 2.5 ) * 3;
-
-
             requestAnimationFrame( animate );
-            // littleM.rotation.y -= 0.005;
-            // bigM.rotation.y -= -0.005;
+            littleM.rotation.x -= 0.025;
+            bigM.rotation.x -= -0.025;
             // camera.lookAt(t.position);
             // console.log('littleM.position: ', littleM.position);
-            // camera.lookAt(littleM.position);
+            camera.lookAt(littleM.position);
             renderer.render(scene, camera);
         };
 
@@ -149,21 +89,21 @@
 
 
         // create ground material
-        let lavaMaterial = new THREE.MeshPhysicalMaterial({map:texture,bumpMap:texture});
+        material = new THREE.MeshPhysicalMaterial({map:texture,bumpMap:texture});
 
         // load object texture
-        var metalTexture = new THREE.TextureLoader().load('./metal.jpg');
+        var texture = new THREE.TextureLoader().load('./metal.jpg');
 
 
         // create ground mesh
         var geometry = new THREE.PlaneBufferGeometry
         ( 100,100 );
         var ground = new THREE.Mesh( geometry, 
-        lavaMaterial );
+        material );
         ground.rotation.z = Math.PI/180 * -45;
         ground.rotation.x = Math.PI/180 * -90;
         ground.position.y=-2.0;
-        // scene.add(ground);
+        scene.add(ground);
 
 
         var envMap = new THREE.CubeTextureLoader()
@@ -173,8 +113,8 @@
 
         // create Tetrahedron
         // var geometry = new THREE.TetrahedronBufferGeometry(2,0);
-        var metalMaterial = new THREE.MeshPhysicalMaterial( { map:metalTexture,   envMap:envMap, metalness:0.9,roughness:1.4 });
-        // t = new THREE.Mesh( geometry, metalMaterial );
+        // var material = new THREE.MeshPhysicalMaterial( { map:texture,   envMap:envMap, metalness:0.3,roughness:1.4 });
+        // t = new THREE.Mesh( geometry, material );
         // t.rotation.x=Math.PI/180*-10;
         // scene.add( t );
 
@@ -211,20 +151,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // const loader = new GLTFLoader();
         // loader.load( './gltf/big.glb', function (gltf) {
         //     littleM = gltf.scene
@@ -254,20 +180,11 @@
             'models/little.obj',
             // called when resource is loaded
             function ( object ) {
-
-
-                object.traverse( function( child ) {
-                    if ( child instanceof THREE.Mesh ) {
-                        child.material = metalMaterial;
-                    }
-                } );
-
-
                 littleM = object
                 object.scale.set( .002, .002, .002 );
-                object.position.x = 0;
-                object.position.y = -0.35;
-                object.position.z = 0.15;
+                object.position.x = 2;
+                object.position.y = 2;
+                object.position.z = 2;
                 scene.add( littleM );
             },
             // called when loading is in progresses
@@ -286,18 +203,11 @@
             'models/big.obj',
             // called when resource is loaded
             function ( object ) {
-
-                object.traverse( function( child ) {
-                    if ( child instanceof THREE.Mesh ) {
-                        child.material = metalMaterial;
-                    }
-                } );
-
                 bigM = object
                 object.scale.set( .002, .002, .002 );
-                object.position.x = 0;
-                object.position.y = 0;
-                object.position.z = 0;
+                object.position.x = 2;
+                object.position.y = 2;
+                object.position.z = 2;
                 scene.add( bigM );
             },
             // called when loading is in progresses
