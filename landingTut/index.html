@@ -23,12 +23,13 @@
         const clock = new THREE.Clock();
         var littleM;
         var bigM;
-        var videoMesh;
+        // var videoMesh;
         var spotLight;
         var time = 0;
         var delta = 0;
-        var materialVideo;
+        // var materialVideo;
         var mousePos = {x:0,y:0};
+        // var cloudParticles = [];
 
         // create camera
         var camera = new THREE.PerspectiveCamera(
@@ -51,7 +52,7 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
         window.addEventListener('resize', onWindowResize, false);
-        document.addEventListener('mousemove', handleMouseMove, false);
+        // document.addEventListener('mousemove', handleMouseMove, false);
 
         let hemLight, shadowLight, backLight;
 
@@ -91,8 +92,15 @@
             mousePos.px = mousePos.x / window.innerWidth * 2 - 1;
             mousePos.py = mousePos.y / window.innerHeight * 2 - 1;
 
-            videoMesh.rotation.y = mousePos.px*.1;
-			videoMesh.rotation.x = mousePos.py*.1;
+            littleM.rotation.z =  mousePos.px*.1;
+            bigM.rotation.z =  mousePos.px*.1;
+
+
+            if (bigM.rotation.x < 1 && bigM.rotation.x > -1) {
+                bigM.rotation.x =  mousePos.py*.2;
+			    littleM.rotation.x =  mousePos.py*.2;
+            }
+
         }
 
 
@@ -111,41 +119,97 @@
         let fps = 60
         let totalAnimationFrames = timeUntilOpaque * fps
 
+
+        let renders = 0;
+
         // ANIMATE CALLBACK
         var animate = function () {
 
 
-            camera.lookAt(videoMesh.position);
+            
+            
+            // camera.lookAt(videoMesh.position);
             // spotLight.position.set(
             //     camera.position.x + 10,
             //     camera.position.y + 10,
             //     camera.position.z + 10
             // );
 
+
             delta = clock.getDelta();
             time += delta;
 
-            if (time > 2 && videoMesh.position.z < 3) {
-                video.play();
-                videoMesh.position.z += .03
+            // if (time > 2 && videoMesh.position.z < 3) {
+            //     video.play();
+            //     videoMesh.position.z += .03
 
-                if (videoMesh.position.z > -.5) {
-                    bigM.position.y += .05;
-                    littleM.position.y -= .05;
-                }
+            //     if (videoMesh.position.z > -.5) {
+            //         bigM.position.y += .05;
+            //         littleM.position.y -= .05;
+            //     }
             
-            }
+            // }
             
+
+        //     if (time > 3 && cloudParticles.length) {
+        //         renders++
+        //         if (renders % 10 === 0) {
+        //             scene.remove(cloudParticles[0])
+        //             cloudParticles.shift();
+        //         }
+        //     }
+
+        // if (cloudParticles.length) {
+        //     cloudParticles.forEach(p => {
+        //         p.rotation.z -=0.002;
+        //     });
+        // }
+
+            
+
             requestAnimationFrame(animate);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+            
 
             // OBJECT POSITIONING
-            if (videoMesh.position.z < -.5) {
-                littleM.rotation.y -= 0.02;
-                bigM.rotation.y -= -0.02;
+
+            if (bigM.rotation.y < 2 * Math.PI) {
+                littleM.rotation.y -= 0.04;
+                bigM.rotation.y -= -0.04;
             }
 
+            if (bigM.rotation.y > 2 * Math.PI && littleM.rotation.x >= -Math.PI) {
+                littleM.position.y += 0.02;
+                bigM.position.y -= 0.04;
+                littleM.rotation.x -= 0.08;
+            }
 
-            materialVideo.opacity += 1/totalAnimationFrames;
+            if (
+                bigM.rotation.y > 2 * Math.PI &&
+                littleM.rotation.x <= -Math.PI &&
+                bigM.rotation.z < Math.PI / 4
+            ) {
+                bigM.rotation.z += 0.02;
+                littleM.rotation.z -= 0.02;
+                littleM.position.x -= 0.04;
+                bigM.position.x += 0.04;
+            }
+
+            if (
+                bigM.rotation.y > 2 * Math.PI &&
+                littleM.rotation.x <= -Math.PI &&
+                bigM.rotation.z > Math.PI / 4 &&
+                camera.position.z > 0
+            ) {
+                camera.position.z -= 0.1;
+            }
+
+    
+
+
+            
+            // materialVideo.opacity += 1/totalAnimationFrames;
 
             renderer.render(scene, camera);
         };
@@ -154,17 +218,19 @@
         // MATERIALS
 
         // LAVA!
-        var envMap = new THREE.CubeTextureLoader()
-            .setPath( 'lava3/')
-            .load( [ 'right.jpg', 'left.jpg', 'top.jpg', 'bottom.jpg', 'front.jpg', 'front.jpg' ] );
-        var metalTexture = new THREE.TextureLoader().load('./metal.jpg');
-        var metalMaterial = new THREE.MeshPhysicalMaterial( { envMap: envMap, metalness: 1.0,roughness: 0.0 });
+        // var envMap = new THREE.CubeTextureLoader()
+        //     .setPath( 'lava3/')
+        //     .load( [ 'right.jpg', 'left.jpg', 'top.jpg', 'bottom.jpg', 'front.jpg', 'front.jpg' ] );
+        // var metalTexture = new THREE.TextureLoader().load('./metal.jpg');
+        // var metalMaterial = new THREE.MeshPhysicalMaterial( { envMap: envMap, metalness: 1.0,roughness: 0.0 });
 
 
         // METAL
-        // var envMap = new THREE.CubeTextureLoader()
-        //     var metalTexture = new THREE.TextureLoader().load('./metal.jpg');
-        //     var metalMaterial = new THREE.MeshPhysicalMaterial( { map: metalTexture, metalness: 0.5,roughness: 0.5 });
+        var envMap = new THREE.CubeTextureLoader()
+            var metalTexture = new THREE.TextureLoader().load(
+                "https://cdn.shopify.com/s/files/1/0246/0201/7873/files/metal.jpg?v=1627967037"
+            );
+            var metalMaterial = new THREE.MeshPhysicalMaterial( { map: metalTexture, metalness: 0.5,roughness: 0.5 });
 
 
         // THE M OBJECTS
@@ -186,10 +252,10 @@
                 bigM = object;
                 object.scale.set(0.002, 0.002, 0.002);
                 object.position.x = 0;
-                object.position.y = 1;
+                object.position.y = .6;
                 object.position.z = 0;
                 scene.add(bigM);
-                camera.lookAt(new THREE.Vector3(0, 8, 0));
+                camera.lookAt(new THREE.Vector3(0, 0, 0));
             },
             // called when loading is in progresses
             function (xhr) {
@@ -240,14 +306,56 @@
 
 
         // VIDEO
-        var video = document.getElementById( 'video' );
-        const videoTexture = new THREE.VideoTexture( video );
-        const screen = new THREE.PlaneGeometry(3.2, 1.8);
-        materialVideo =  new THREE.MeshBasicMaterial( {map: videoTexture, side: THREE.FrontSide, toneMapped: false, transparent: true, opacity: 0} );
-        videoMesh = new THREE.Mesh(screen, materialVideo);
-        videoMesh.position.set(0, 0, -12);
+        // var video = document.getElementById( 'video' );
+        // const videoTexture = new THREE.VideoTexture( video );
+        // const screen = new THREE.PlaneGeometry(3.2, 1.8);
+        // materialVideo =  new THREE.MeshBasicMaterial( {map: videoTexture, side: THREE.FrontSide, toneMapped: false, transparent: true, opacity: 0} );
+        // videoMesh = new THREE.Mesh(screen, materialVideo);
+        // videoMesh.position.set(0, 0, -12);
+        // scene.add(videoMesh);
 
-        scene.add(videoMesh);
+
+
+
+
+
+
+
+        // SMOKE / CLOUDS
+        // var cloudGeo, cloudMaterial;
+        // let smokeTexture = new THREE.TextureLoader().load("smoke.png", function(texture){
+        //     cloudGeo = new THREE.PlaneBufferGeometry(80,80);
+        //     cloudMaterial = new THREE.MeshLambertMaterial({
+        //         map: texture,
+        //         transparent: true
+        //     });
+        //     for(let p=0; p<25; p++) {
+        //         let rx = (Math.random() * 50) - 25;
+        //         let ry = (Math.random() * 50) - 25;
+        //         let rz = (Math.random() * 50) - 75;
+        //         console.log(rx)
+
+        //         let cloud = new THREE.Mesh(cloudGeo,cloudMaterial);
+        //         cloud.position.set(
+        //             rx,
+        //             ry,
+        //             rz
+        //         );
+        //         // cloud.rotation.x = 1.16;
+        //         // cloud.rotation.y = -0.12;
+        //         cloud.rotation.z = Math.random()*360;
+        //         cloud.material.opacity = 0.6;
+        //         scene.add(cloud);
+        //         cloudParticles.push(cloud);
+        //     }
+        // });
+
+
+
+
+
+
+
 
 
         // start animation loop
@@ -258,7 +366,7 @@
         <source src="//cdn.rawgit.com/mrdoob/three.js/master/examples/textures/sintel.ogv" type='video/ogg; codecs="theora, vorbis"'>
         <source src="//cdn.rawgit.com/mrdoob/three.js/master/examples/textures/sintel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
     </video>
-    <h1>Miles Morgan Photography</h1>
+    <!-- <h1>Miles Morgan Photography</h1> -->
     <canvas id="myCanvasId"></canvas>
 
     </body>
